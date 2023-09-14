@@ -1,0 +1,23 @@
+{
+  "credentials": {
+    "owner1": {
+      "username": "{email}",
+      "password": "{password}"
+    },
+    "owner2": {
+      "username": "",
+      "password": ""
+    },
+    "member1": {
+      "username": "",
+      "password": ""
+    }
+  },
+  "url": {
+    "trello": "https://start.atlassian.com/"
+  },
+  "tags": "@smoke",
+  "local": {
+    "browser": "chrome"
+  }
+}

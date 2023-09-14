@@ -1,0 +1,58 @@
+group 'org.example.trello'
+version '1.0'
+
+// Apply the java plugin to add support for Java
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'checkstyle'
+
+repositories {
+    mavenCentral()
+}
+
+// In this section you declare the dependencies for your production and test code
+dependencies {
+    implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.141.59'
+    implementation group: 'io.github.bonigarcia', name: 'webdrivermanager', version: '5.5.3'
+    implementation group: 'io.rest-assured', name: 'rest-assured', version: '4.3.3'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.0'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
+    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+    implementation group: 'com.jayway.jsonpath', name: 'json-path', version: '2.5.0'
+
+    implementation group: 'com.google.guava', name: 'guava', version: '30.1-jre'
+    implementation group: 'io.cucumber', name: 'cucumber-java', version: '6.10.2'
+    implementation group: 'io.cucumber', name: 'cucumber-testng', version: '6.10.2'
+    testImplementation group: 'io.cucumber', name: 'cucumber-picocontainer', version: '6.10.2'
+}
+
+// Checkstyle configuration
+checkstyle {
+    toolVersion = '8.41.1'
+}
+
+tasks.withType(Checkstyle) {
+    reports {
+        xml.enabled false
+        html.enabled true
+    }
+}
+
+task runFeatures(type: Test) {
+    doFirst {
+        def jsonFile = file('environment.json')
+        def parsedJson = new groovy.json.JsonSlurper().parseText(jsonFile.text)
+
+        useTestNG()
+        options {
+            useDefaultListeners = false
+            jvmArgs = ['-Dcucumber.options= ' +
+                               '--glue org.example.trello.ui.cucumber ' +
+                               '--plugin pretty ' +
+                               '--features  src/test/resources/features/' +
+                               parsedJson.tags]
+        }
+        testLogging.showStandardStreams = true
+    }
+}
+
